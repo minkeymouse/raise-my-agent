@@ -15,10 +15,10 @@
 준비물 (2장 공통): 02_tool_schema.py와 04_memory_checkpoint.py는 OPENAI_API_KEY가 필요합니다.
     https://platform.openai.com/api-keys 에서 발급한 키를 리포지토리 루트의 .env 파일에 적어 둡니다.
 
-실행하면 이 폴더(ch02_first_steps/)에 cry.txt가 생깁니다. food.txt는 코드가 만들지 않으므로
-밥먹기 테스트는 책의 예상대로 '맘마 없어'를 출력합니다.
+실행하면 이 폴더(ch02_first_steps/)에 cry.txt가 생깁니다. food.txt가 없으면 밥먹기 테스트는
+'맘마 없어'를 출력합니다.
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # %% 2. 환경 설정 및 라이브러리 임포트
@@ -37,8 +37,7 @@ from pydantic import BaseModel, Field
 # 환경 변수 로드 (.env)
 load_dotenv(find_dotenv())
 
-# [보충] 책의 도구는 cry.txt, poo.txt, food.txt를 '현재 작업 디렉토리'에서 읽고 씁니다.
-#        리포 루트에서 실행해도 기록 파일이 이 장 폴더(ch02_first_steps/)에 생기도록 작업 디렉토리를 옮깁니다.
+# [보충] 도구가 cry.txt, poo.txt, food.txt를 이 장 폴더(ch02_first_steps/)에서 읽고 쓰도록 작업 디렉토리를 옮깁니다.
 from pathlib import Path
 
 if "__file__" in globals():  # 주피터 커널로 셀 단위 실행할 때는 __file__이 없으므로 건너뜁니다.

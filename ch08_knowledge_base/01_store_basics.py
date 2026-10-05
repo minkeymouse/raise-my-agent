@@ -11,14 +11,13 @@
 실행 방법:
     uv run python ch08_knowledge_base/01_store_basics.py
 필요한 환경 변수: OPENAI_API_KEY (마지막 '벡터 Store' 셀의 임베딩 모델)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 
-책의 코드는 결과를 변수(all_memories, specific_memory, top)에 담기만 하므로 실행해도 출력이 없습니다.
-VS Code나 PyCharm에서 # %% 셀 단위로 실행한 뒤 변수를 확인합니다.
+결과는 변수(all_memories, specific_memory, top)에 담기므로, VS Code나 PyCharm에서 # %% 셀 단위로 실행한 뒤 변수를 확인합니다.
 
 8장 준비물 (2절의 Neo4j 예제와 3절의 시험공부 에이전트에 필요합니다):
 - Neo4j Desktop: https://neo4j.com/download/ 에서 받아 설치하고, 왼쪽 Local Instances에서 create instance로 인스턴스를 만듭니다
-  (책의 예: 이름 research_agent, 권장(recommended) 버전, 접속 계정과 비밀번호). 접속 주소는 bolt://localhost:7687입니다.
+  (예: 이름 research_agent, 권장(recommended) 버전, 접속 계정과 비밀번호). 접속 주소는 bolt://localhost:7687입니다.
 - 또는 Neo4j Aura(클라우드): Aura 콘솔(https://console.neo4j.io)에서 인스턴스를 만들고, 만들 때 내려받는 자격 증명 파일의
   NEO4J_URI(neo4j+s://...), NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_DATABASE 값을 씁니다. 어느 쪽이든 코드는 같고 URI만 다릅니다.
 - 리포지토리 루트의 .env에 아래 값을 적습니다(cp .env.example .env). Aura라면 NEO4J_URI에 neo4j+s://... 주소를 넣고 NEO4J_DATABASE도 적습니다.
@@ -26,9 +25,9 @@ VS Code나 PyCharm에서 # %% 셀 단위로 실행한 뒤 변수를 확인합니
       NEO4J_USERNAME=neo4j
       NEO4J_PASSWORD=생성할_때_설정한_비밀번호
       OPENAI_API_KEY=sk-...
-  책은 .env.local을 안내합니다. 3절의 chapter8 패키지는 .env.local을 먼저 읽고 .env로 보완하지만, 01~03 파일은 .env만 읽습니다.
-  NEO4J_* 값은 chapter8 패키지가 읽습니다. 2절 예제(02a, 02b, 02d)는 책처럼 접속 정보를 코드에 적으므로 YOUR_PASSWORD를 직접 고칩니다.
-책은 1절과 2절의 개념과 코드를 먼저 읽고, 3절의 chapter8 패키지를 직접 돌려 보는 흐름을 권장합니다.
+  3절의 chapter8 패키지는 .env.local을 먼저 읽고 .env로 보완하며, 01~03 파일은 .env만 읽습니다.
+  NEO4J_* 값은 chapter8 패키지가 읽습니다. 2절 예제(02a, 02b, 02d)는 접속 정보를 코드에 적으므로 password="YOUR_PASSWORD"를 본인 비밀번호로 바꿉니다.
+1절과 2절의 개념과 코드를 먼저 읽고, 3절의 chapter8 패키지를 직접 돌려 보는 흐름을 권장합니다.
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -59,7 +58,7 @@ specific_memory = store.get(namespace, "memory_1")
 # %% 2. 다양한 Store 예시 - 외부 Store (PostgresStore)
 # 영구 보관이 필요하거나 데이터가 많아지면 외부 데이터베이스와 연동한 스토어를 씁니다(PostgreSQL + pgvector, Redis, Neo4j 등).
 # 외부 스토어는 프로그램이 재시작되어도 데이터가 남고, 여러 프로세스나 서버가 같은 스토어를 공유할 수 있습니다. 이 책은 Neo4j를 씁니다.
-# [설명용 코드] PostgreSQL 서버와 기본 의존성에 없는 langgraph-checkpoint-postgres 패키지가 필요해 주석으로 둡니다.
+# [설명용 코드] PostgreSQL 서버와 langgraph-checkpoint-postgres 패키지가 있어야 실행되는 예시입니다.
 #
 # import uuid
 # from langgraph.store.postgres import PostgresStore

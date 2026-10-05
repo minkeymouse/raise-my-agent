@@ -27,10 +27,10 @@ Safari에서 Studio가 로컬 서버에 연결되지 않으면 Chrome을 쓰거�
     - NAVER Developers(https://developers.naver.com/main/)에서 계정을 만들고 애플리케이션을 등록해(사용 API: 검색)
       클라이언트 아이디와 시크릿을 발급받습니다.
     - Studio는 LangSmith(https://smith.langchain.com)의 웹 인터페이스이므로 LangSmith 계정이 필요합니다.
-    - 책처럼 패키지를 직접 설치한다면 langgraph-cli 대신 "langgraph-cli[inmem]"을 설치해야 langgraph dev가 실행됩니다.
-      이 리포지토리는 루트에서 uv sync를 한 번 실행하면 모두 설치됩니다.
+    - 필요한 패키지는 리포지토리 루트에서 uv sync를 실행해 설치합니다. 패키지를 직접 설치할 때는
+      langgraph dev를 실행할 수 있도록 "langgraph-cli[inmem]"을 설치합니다.
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -79,7 +79,6 @@ class BabyContext:
 # 자료조사 에이전트의 핵심은 여러 검색 도구입니다. 블로그, 뉴스, 일반 웹 검색은 서로 다른 소스에서
 # 정보를 가져오므로 에이전트가 상황에 맞는 도구를 골라 씁니다.
 # NaverSearchAPIWrapper는 환경 변수 NAVER_CLIENT_ID, NAVER_CLIENT_SECRET으로 네이버 검색 API를 호출합니다.
-# 모델에게 보이는 도구 이름은 차례로 naver_blog_search, naver_news_search, naver_search_results_json입니다.
 from langchain_naver_community.tool import (
     NaverBlogSearch,
     NaverNewsSearch,
@@ -143,7 +142,7 @@ from langchain.agents.middleware import (
     SummarizationMiddleware,
 )
 
-# 참고: 이 middleware 리스트는 인자를 주는 방법을 보여 주는 예시이고, 에이전트에는 4.의 middleware=[...]가 들어갑니다.
+# 이 middleware 리스트는 인자를 주는 방법을 보여 주는 예시이고, 에이전트에는 4.의 middleware=[...]가 들어갑니다.
 middleware = [
     TodoListMiddleware(),
     # thread_limit은 한 대화(thread_id) 전체, run_limit은 한 번의 실행에서 허용하는 호출 횟수입니다.
@@ -246,8 +245,6 @@ graph = create_agent(
             thread_limit=10,
             run_limit=5,
         ),
-        # 참고: 일반 웹 검색 도구의 실제 이름은 naver_search_results_json이라, 이 설정은 오류 없이 실행되지만
-        # 일반 웹 검색의 호출 횟수는 제한하지 못합니다. 제한하려면 이름을 "naver_search_results_json"으로 씁니다.
         ToolCallLimitMiddleware(
             tool_name="naver_search_results",
             thread_limit=10,
@@ -276,6 +273,6 @@ graph = create_agent(
 # )
 
 # %% [보충] LangGraph Studio용 그래프
-# langgraph dev는 체크포인터가 들어 있는 graph를 불러오지 못하므로("... includes a custom checkpointer" 오류),
-# 체크포인터만 뺀 그래프를 langgraph.json에 baby_research로 등록합니다. Studio에서는 서버가 대화 상태를 저장합니다.
+# Studio에서는 langgraph dev 서버가 대화 상태를 저장하므로, 체크포인터를 뺀 그래프를 langgraph.json에
+# baby_research로 등록합니다.
 studio_graph = graph.copy(update={"checkpointer": None})

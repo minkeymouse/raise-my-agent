@@ -10,7 +10,7 @@
 실행 방법:
     uv run python ch08_knowledge_base/02c_store_search_rag.py
 필요한 환경 변수: OPENAI_API_KEY (Neo4j는 쓰지 않습니다)
-책의 조회 예시는 새로 만든 빈 스토어를 검색하므로 검색 결과는 비어 있고, 마지막 RAG 답변만 출력됩니다.
+조회 예시는 새로 만든 빈 스토어를 검색하므로 검색 결과 없이 마지막 RAG 답변만 출력됩니다.
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -19,7 +19,7 @@ load_dotenv()
 
 # %% 4. 에이전트 지식베이스 쿼리 - get(): 정확한 키로 찾기
 # 직접 검색은 어디에 뭐가 있는지 알 때 가장 빠른 방법입니다. 작품 제목을 정확히 알면 프로필을 바로 가져옵니다.
-# 네임스페이스에 user_id를 넣어 학생별로 노트를 나눴습니다. get()은 항목이 없으면 None을 돌려주므로 if profile:로 확인합니다.
+# 네임스페이스에 user_id를 넣어 학생별로 노트를 나눕니다. get()은 항목이 없으면 None을 돌려주므로 if profile:로 확인합니다.
 from langgraph.store.memory import InMemoryStore
 
 store = InMemoryStore()

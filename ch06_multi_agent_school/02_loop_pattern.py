@@ -136,7 +136,7 @@ for msg in result["messages"]:
 # %% 2. 넌 학생이고 난 선생이야: 리뷰 및 반복 개선 패턴 - LangGraph로 글짓기 수업 구현: 모듈과 상태, 모델 준비
 # 위 결과처럼 루프 패턴의 채점자는 정답을 직접 알려 주기도 해서, 학생과 채점자의 역할 분리가 완벽하지 않았습니다.
 # 이번에는 작성자(Generator)는 오직 글을 쓰고, 비평가(Critic)는 "어디가, 왜 부족한지"만 구체적으로 알려 주도록 나눕니다.
-# 책과 같이 필요한 모듈과 StudyState, llm을 다시 정의하고 시작합니다(1번과 같은 내용입니다).
+# 필요한 모듈과 StudyState, llm을 다시 정의합니다(1번과 같은 내용입니다).
 from typing import TypedDict, Annotated, List
 import operator
 from langchain_openai import ChatOpenAI
@@ -285,7 +285,8 @@ for i, msg in enumerate(result["messages"]):
 # 가을의 고독함을 잘 전달합니다.
 # 완벽합니다.
 
-# 참고: 비평가는 고칠 방향만 제시하고, 피드백을 어떻게 반영할지는 작가가 정합니다. 책은 두 패턴의 관계를 이렇게 정리합니다.
+# 참고: 비평가는 고칠 방향만 제시하고, 피드백을 어떻게 반영할지는 작가가 정합니다.
+# 루프 패턴과 리뷰 및 반복 개선 패턴의 관계는 다음과 같습니다.
 # [루프 패턴]         →  Action → Check(PASS/FAIL) → Loop
 # [리뷰 및 반복 개선]  →  Generate → Critique(구체적 피드백) → Refine → Critique → ...
 # 정답이 명확한 작업(수학 문제, 데이터 검증)은 루프 패턴으로 충분하고, 품질 향상이 필요한 작업(글쓰기, 코드 리뷰)에는 리뷰 및 반복 개선 패턴을 씁니다.

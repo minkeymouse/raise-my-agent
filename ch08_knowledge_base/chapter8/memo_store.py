@@ -4,7 +4,7 @@
 InMemoryStore에 임베딩 인덱스(fields=["content"])를 붙여 작품 프로필과 메모를 넣고,
 query=로 의미 기반 검색을 합니다. 프로필과 메모 모두 검색에 쓰일 content 문자열을 채웁니다.
 InMemoryStore는 프로그램이 끝나면 비워지므로 메모 값을 chapter8/.memo_cache/literature_memos.json에
-저장해 두었다가 exam 실행 때 다시 불러옵니다.
+저장하고, exam 실행 때 다시 불러옵니다.
 
 필요한 환경 변수: OPENAI_API_KEY (임베딩 모델 text-embedding-3-small)
 """
@@ -35,7 +35,7 @@ def build_vector_store() -> InMemoryStore:
     )
 
 
-# 2절의 서랍 구조에 user_id를 더했습니다. 메모는 ("literature", "memos", user_id, 작품명), 프로필은 ("literature", "profiles", user_id)입니다.
+# 2절의 서랍 구조에 user_id를 넣은 네임스페이스입니다. 메모는 ("literature", "memos", user_id, 작품명), 프로필은 ("literature", "profiles", user_id)입니다.
 def memos_namespace(user_id: str, work_title: str) -> tuple[str, ...]:
     return ("literature", "memos", user_id, work_title)
 

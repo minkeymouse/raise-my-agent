@@ -122,6 +122,3 @@ for d in result["drafts"]:
 # [Aggregate] 섹션 2개 통합 → 최종 보고서
 # -  [Intro] [Intro] AI 윤리 관련 자료를 바탕으로 작성한 초안
 # -  [Conclusion] [Conclusion] AI 윤리 관련 자료를 바탕으로 작성한 초안
-#
-# 참고: 같은 단계에서 병렬로 실행된 노드의 결과는 노드 이름의 알파벳 순서로 합쳐지므로,
-#       실제로는 conclusion_team의 초안이 intro_team의 초안보다 먼저 출력됩니다.

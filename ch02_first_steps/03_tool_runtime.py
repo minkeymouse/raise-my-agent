@@ -9,7 +9,7 @@
 
 실행 방법:
     uv run python ch02_first_steps/03_tool_runtime.py
-필요한 환경 변수: 없음 (책처럼 도구를 정의만 하고 실행하지 않으므로 출력이 없습니다)
+필요한 환경 변수: 없음 (도구를 정의만 하고 실행하지 않으므로 출력이 없습니다)
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -72,7 +72,6 @@ def read_atmosphere(runtime: ToolRuntime) -> str:
 # %% 4. 행동의 결과로 상태 바꾸기: Command
 # 도구가 실행된 뒤 상태(State)를 바꾸고 싶을 때는 Command를 반환합니다. 상태는 딕셔너리처럼 키와 값을 가지므로,
 # update에 바꿀 키와 값을 적습니다. 이제 아기는 놀고 나면 "놀았다"고 말하는 데 그치지 않고 실제로 행복해집니다.
-# 참고: 현재 langgraph의 Command에는 value 인자가 없어, 이 도구를 실제로 호출하면 TypeError가 납니다. (책에서는 정의만 합니다)
 from langchain.tools import tool
 from langgraph.types import Command
 

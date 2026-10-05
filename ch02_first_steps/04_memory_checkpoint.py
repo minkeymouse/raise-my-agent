@@ -11,7 +11,7 @@
     uv run python ch02_first_steps/04_memory_checkpoint.py
 필요한 환경 변수: OPENAI_API_KEY (리포지토리 루트의 .env)
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -20,8 +20,7 @@ load_dotenv()
 
 
 # %% [보충] 2절에서 만든 모델과 도구 준비
-# [보충] 책에서 "(그래프/에이전트 정의 과정 생략)"으로 넘어간 llm과 tools입니다.
-#        1절의 임포트와 2절의 스키마, 도구, 모델 코드를 책 그대로 가져왔습니다.
+# [보충] 아래 에이전트가 쓰는 llm과 tools입니다. (1절의 임포트, 2절의 스키마, 도구, 모델 코드)
 import os
 import random
 
@@ -121,7 +120,6 @@ agent = create_agent(
 # %% 4. 너 누구랑 얘기하고 있니? : 스레드(Thread)로 사용자 구별하기 - 엄마와의 대화
 # 실행할 때 config의 "configurable"에 thread_id를 넣어 대화방을 정합니다. 체크포인트는 thread_id별로 따로 저장되고,
 # thread_id가 같아야 그 대화방의 상태와 기록을 복원할 수 있습니다. 이 대화는 "mom" 대화방에 저장됩니다.
-# 참고: 아래 'AI:' 주석은 책에 실린 예시 답변입니다. 이 코드에는 엄마가 밥을 주는 단계가 없어 실제 답변은 다를 수 있습니다.
 # 엄마와의 대화방
 config_mom = {
     "configurable": {
@@ -175,7 +173,6 @@ print(response3["messages"][-1].content)
 # MemorySaver의 기억은 코드가 끝나면 사라지므로, 기억을 유지하려면 메모리 대신 데이터베이스나 파일에 저장합니다.
 # 직접 만든 체크포인터는 저장하고 불러오는 로직을 손수 구현해야 해서, 보통은 PostgresSaver, SqliteSaver 같은 DB용 저장소를 씁니다.
 # [설명용 코드] 로컬 파일에 JSON으로 저장하는 원리를 보여 주는 예시입니다.
-#               get_latest_checkpoint의 본문이 생략되어 그대로는 문법 오류가 나므로 주석으로 남겼습니다.
 #
 # import json, os
 # from langgraph.checkpoint.base import BaseCheckpointSaver

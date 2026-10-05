@@ -6,17 +6,16 @@ data/exam/기출_날개.txt에서 지문과 40~43번 문항 블록을 나눈 뒤
 -> (4) 구조화 출력으로 선지 번호·해설을 생성합니다. 시험 문제는 '정답(판단) + 근거(텍스트)'를 함께 요구하므로
 그래프에서 관계의 뼈대를 잡고 스토어에서 근거 문장을 보강합니다. 지문은 잘라 쓰지 않고 전체를 그대로 넣습니다.
 
-실행 방법 (ch08_knowledge_base 폴더에서, ingest를 먼저 실행해 두어야 합니다):
+실행 방법 (ch08_knowledge_base 폴더에서, ingest를 먼저 실행한 뒤 실행합니다):
     uv run python -m chapter8 exam
     uv run python -m chapter8 exam --question 40
 필요한 환경 변수: OPENAI_API_KEY, NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD (선택: NEO4J_DATABASE, CHAPTER8_LLM_MODEL)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 
-기출 문항 파일 준비 (출제 기관에 권리가 있어 리포에 넣지 않았습니다. ingest는 이 파일 없이 실행됩니다):
-1. 《날개》가 지문으로 나온 수능 국어 문학 기출 문항을 한국교육과정평가원 누리집(https://www.suneung.re.kr/) 등에서 구합니다.
-2. 지문 본문을 먼저 적고, 그 아래에 문항을 "40. ", "41. ", "42. ", "43. "처럼 줄 맨 앞에 번호, 마침표, 공백을 두어 차례로 적습니다.
-   각 문항에는 발문과 선지(①~⑤)를 함께 적습니다. 첫 "40. " 앞까지가 지문으로 쓰입니다.
-3. UTF-8로 ch08_knowledge_base/data/exam/기출_날개.txt에 저장합니다. 이 폴더는 .gitignore에 들어 있어 커밋되지 않습니다.
+기출 문항 파일:
+    exam은 ch08_knowledge_base/data/exam/기출_날개.txt를 읽습니다. 《날개》 지문을 먼저 적고, 그 아래에 문항을
+    "40. ", "41. ", "42. ", "43. "처럼 줄 맨 앞에 번호, 마침표, 공백을 두어 차례로 적은 뒤 UTF-8로 저장합니다.
+    각 문항에는 발문과 선지(①~⑤)를 함께 적습니다. 첫 "40. " 앞까지가 지문으로 쓰입니다.
 OpenAI 키 없이도 파일이 지문과 문항으로 나뉘는지 확인할 수 있습니다(ch08_knowledge_base 폴더에서):
     uv run python -c "from chapter8.exam_agent import _split_exam_nalgae; from chapter8.paths import EXAM_NALGAE; p, q = _split_exam_nalgae(EXAM_NALGAE.read_text(encoding='utf-8')); print('passage_chars', len(p)); print('question_numbers', [x.number for x in q])"
 [책의 실행 결과]
@@ -161,11 +160,11 @@ def run_exam(*, only: int | None = None, user_id: str = USER_ID_DEFAULT) -> None
     if not os.environ.get("OPENAI_API_KEY"):
         raise RuntimeError("OPENAI_API_KEY가 필요합니다.")
 
-    # [보충] 기출 문항 파일은 저작권 문제로 리포에 포함하지 않았습니다. 파일이 없으면 준비 방법을 안내합니다.
+    # [보충] 기출 문항 파일이 없으면 저장 경로와 형식을 안내합니다.
     if not EXAM_NALGAE.is_file():
         raise SystemExit(
             f"기출 문항 파일이 없습니다: {EXAM_NALGAE}\n"
-            "《날개》 지문과 40~43번 문항을 직접 준비해 이 경로에 저장하세요. 준비 방법과 형식은 chapter8/exam_agent.py 머리말을 참고하세요."
+            "《날개》 지문과 40~43번 문항을 이 경로에 저장하세요. 파일 형식은 chapter8/exam_agent.py 머리말을 참고하세요."
         )
     raw = EXAM_NALGAE.read_text(encoding="utf-8")
     passage, questions = _split_exam_nalgae(raw)

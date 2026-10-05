@@ -80,7 +80,7 @@ def test_chapter_dirs_are_complete():
 
 
 def test_only_root_readme_is_markdown():
-    # 공개 리포에는 루트 README.md만 두고, 장별 설명은 예제 파일의 머리말과 주석에 둡니다.
+    # 장별 설명은 예제 파일의 머리말과 주석에 둡니다.
     extra = [_rel(p) for p in MD_FILES if p != ROOT / "README.md"]
     assert not extra, f"루트 README.md 외의 마크다운 파일이 있습니다: {extra}"
 
@@ -336,7 +336,7 @@ def test_secrets_and_generated_files_are_gitignored(path: str):
 
 
 def test_book_data_files_are_not_gitignored():
-    # data/exam/(기출 문항)은 저작권 문제로 리포에 넣지 않으며 .gitignore로 제외합니다.
+    # data/exam/은 독자가 직접 준비하는 파일이라 .gitignore로 제외합니다.
     for data in (ROOT / "ch08_knowledge_base" / "data").glob("*.txt"):
         try:
             result = subprocess.run(["git", "check-ignore", "-q", _rel(data)], cwd=ROOT, capture_output=True)

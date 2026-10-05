@@ -119,6 +119,3 @@ for event in app.stream(inputs):
 # 답변을 작성합니다...
 #    Node: answer
 #    State Update: {'answer': '검색 결과에 따르면...'}
-#
-# 참고: 상태에는 정의된 키만 반영됩니다. AgentState에는 context, answer가 없어 LangGraph가 이 값을 버리므로
-#       실제로는 State Update가 {'next_step': 'answer'}와 None으로 출력됩니다.

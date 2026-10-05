@@ -10,15 +10,14 @@
 실행 방법:
     uv run python ch03_interaction/01_streaming.py
 필요한 환경 변수: OPENAI_API_KEY (리포지토리 루트의 .env 파일에 넣습니다)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 
-LLM의 답변은 실행할 때마다 조금씩 달라집니다. 책의 결과처럼 eat 도구가 "맘마 없어"를 돌려주려면 이 폴더에 food.txt가 없어야 합니다.
+eat 도구가 "맘마 없어"를 돌려주게 하려면 이 폴더에 food.txt를 두지 않습니다.
 실행하면 이 폴더(ch03_interaction/)에 아기 에이전트의 기록 파일(cry.txt, poo.txt)이 생깁니다.
 """
 
 # %% [보충] 기록 파일 위치 정하기
-# [보충] 도구가 cry.txt, poo.txt, food.txt를 현재 작업 디렉터리에서 읽고 쓰므로,
-#        어디서 실행하든 이 폴더(ch03_interaction/)를 쓰도록 작업 디렉터리를 옮깁니다.
+# [보충] 도구가 읽고 쓰는 cry.txt, poo.txt, food.txt가 이 폴더(ch03_interaction/)에 생기도록 작업 디렉터리를 옮깁니다.
 import os
 from pathlib import Path
 
@@ -27,7 +26,7 @@ if "__file__" in globals():  # 주피터 커널로 셀 단위 실행할 때는 _
 
 
 # %% [보충] 3장 실습 환경 설정 (00_baby_agent_setup.py와 같은 코드)
-# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 한곳에 모았습니다. 앞에서 배운 내용을 정리해 봅시다.
+# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 하나로 합쳐 정의합니다. 앞에서 배운 내용을 정리해 봅시다.
 # @tool은 함수를 도구로 만들고, args_schema에 넣은 Pydantic 스키마는 인자의 기본값, 설명, 최소/최대값(ge, le)을 정해 두는 '틀'입니다.
 import os
 import random
@@ -46,7 +45,7 @@ load_dotenv(find_dotenv())
 
 # --- 1. 입력 스키마 정의 ---
 class CryInput(BaseModel):
-    # [수정] 필드 이름을 cry 함수의 인자(cry_count)와 맞췄습니다(다르면 cry를 부를 때마다 TypeError). (책: 아래 주석 줄)
+    # [수정] 스키마의 필드 이름은 cry 함수의 인자 이름(cry_count)과 같아야 합니다. (책: 아래 주석 줄)
     # how_many_times: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
     cry_count: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
 
@@ -95,7 +94,7 @@ def eat() -> str:
 
 print("아기 에이전트와 도구 준비 완료!")
 
-# [보충] 책에는 my_model의 정의가 없어 2장에서 사용한 gpt-4o-mini 모델로 만듭니다.
+# [보충] 2장에서 사용한 gpt-4o-mini 모델
 my_model = init_chat_model("openai:gpt-4o-mini")
 
 
@@ -105,7 +104,7 @@ my_model = init_chat_model("openai:gpt-4o-mini")
 # 현재 기분 랜덤 설정 (예: 'hungry')
 current_mood = "hungry"
 
-# [보충] 책은 baby_agent가 이미 있다고 보고 시작합니다. 3장 2절의 시스템 프롬프트와 create_agent를 middleware 인자만 빼고 가져왔습니다.
+# [보충] 3장 2절의 시스템 프롬프트와 baby_agent (middleware 인자 제외)
 my_system_prompt = f"""
 너는 아기 에이전트야. 너의 지금 기분은 {current_mood}야. 이 값에 따라 아래 상태 규칙을 엄격히 따르며 응답해.
 - happy: 도구 호출 금지. 아기가 기분이 좋은 것 처럼 짧은 의성어로 즉시 대답해.
@@ -160,7 +159,7 @@ for chunk in baby_agent.stream(
         if hasattr(last_msg, 'tool_calls') and last_msg.tool_calls:
              print(f"도구 호출: {last_msg.tool_calls[0]['name']}")
 
-# [책의 실행 결과: 베이비 모니터 화면] (괄호 안은 책의 설명입니다)
+# [책의 실행 결과: 베이비 모니터 화면] (괄호 안은 설명입니다)
 # 현재 기분: hungry
 #
 # ===== Step: model =====
@@ -183,6 +182,7 @@ for chunk in baby_agent.stream(
 # stream_mode는 상황에 맞게 고릅니다: updates(각 단계에서 변한 것만, 흐름 파악용), values(누적된 전체 상태),
 # messages(LLM이 치는 토큰을 하나씩, 채팅 화면용), custom(도구 안에서 개발자가 보낸 쪽지).
 # custom 모드에서는 도구 안에서 get_stream_writer()로 얻은 writer에 넘긴 값을 그대로 받습니다.
+# 쪽지는 poo 도구 안에서 보내므로 에이전트가 poo 도구를 호출할 때만 도착합니다.
 # [설명용 코드] poo 도구에 몰래 심어 둔 커스텀 스트리밍 부분입니다. (전체 코드는 맨 위 실습 환경 설정에 있습니다)
 # @tool("poo", args_schema=PooInput)
 # def poo(...):
@@ -196,7 +196,7 @@ for chunk in baby_agent.stream(
 #     (...)
 
 # 결과를 받아보는 코드
-# [보충] 책의 입력 ...을 그대로 넣으면 InvalidUpdateError가 나서 2번과 같은 입력을 넣었습니다. (책: 아래 주석 줄)
+# [보충] ...으로 생략된 입력은 2번과 같은 메시지입니다. (책: 아래 주석 줄)
 # for chunk in baby_agent.stream(..., stream_mode="custom"):
 for chunk in baby_agent.stream({"messages": [{"role": "user", "content": "아기야 안녕?"}]}, stream_mode="custom"):
     print(f" 쪽지 도착: {chunk}")
@@ -204,5 +204,3 @@ for chunk in baby_agent.stream({"messages": [{"role": "user", "content": "아기
 # [책의 실행 결과]
 # * 쪽지 도착: 응가를 봅니다... 끙차!
 # * 쪽지 도착: 응가 성공적으로 생성!
-# (참고: 쪽지는 poo 도구가 보내는 "응가를 봅니다... 끙차!" 하나뿐이고, 기분이 hungry인 이 baby_agent는
-#  프롬프트대로라면 poo 도구를 부르지 않으므로 보통은 아무것도 출력되지 않습니다.)

@@ -12,7 +12,7 @@
     uv run python ch08_knowledge_base/02b_extract_to_graph.py
 필요한 환경 변수: OPENAI_API_KEY
 준비물: Neo4j. 실행 전에 password="YOUR_PASSWORD"를 본인 비밀번호로 바꿉니다(Neo4j Desktop은 APOC 플러그인 필요, 02a 머리말 참고).
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -99,8 +99,9 @@ graph = Neo4jGraph(
 
 def save_to_graph(extracted: LiteratureExtraction, graph: Neo4jGraph):
     """추출한 정보를 Neo4j 그래프에 저장"""
-    # 참고: 리스트가 비면 UNWIND가 행을 만들지 않아 뒤쪽 절이 건너뛰어집니다(책 설명). 또 WITH ev, e에서 b가 빠져 해석·인용·요약이
-    #       Book이 아닌 새 노드에 붙고, Cypher 25에서만 실행됩니다(02a 참고). 3절 chapter8/neo4j_store.py는 쿼리를 나눠 이를 피합니다.
+    # 교육용으로 한 번에 묶은 쿼리입니다. 리스트가 비면 UNWIND가 행을 만들지 않아 이후 절이 건너뛸 수 있으므로,
+    # 3절 chapter8/neo4j_store.py는 테마·인물·관계 등을 쿼리 단위로 나눠 실행합니다.
+    # "WITH is required between ..." 오류가 나면 02a의 참고처럼 쿼리 맨 앞에 CYPHER 25를 붙입니다.
 
     # 작가와 작품 노드 생성 및 관계 연결
     query = """
@@ -171,8 +172,8 @@ save_to_graph(extracted, graph)
 
 # %% 3. 에이전트의 지식베이스 업데이트 - LangGraph 노드로 만들기
 # 추출과 저장을 노드 하나로 묶으면, 에이전트가 작품을 읽을 때마다 엔티티(작가, 작품, 주제, 인물)와 관계가 그래프에 저장됩니다.
-# 노드는 마지막 HumanMessage를 작품 텍스트로 보고, 저장을 마치면 AIMessage로 알립니다. 아래 "[작품 텍스트 내용...]"은 책의 개념 예시로,
-# 실제로는 이 자리에 작품 본문을 넣습니다.
+# 노드는 마지막 HumanMessage를 작품 텍스트로 보고, 저장을 마치면 AIMessage로 알립니다.
+# 아래 "[작품 텍스트 내용...]" 자리에는 작품 본문을 넣습니다.
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_neo4j import Neo4jGraph
@@ -208,8 +209,7 @@ def extract_and_save_to_graph(
 
 # 그래프 구성
 builder = StateGraph(MessagesState)
-# [수정] LangGraph는 graph, structured_llm 인자를 채워 주지 않아 invoke에서 TypeError가 납니다.
-#        책의 주석대로 functools.partial로 두 값을 바인딩해 등록합니다. (책: 아래 주석 줄)
+# [수정] 노드 함수에는 graph와 structured_llm 인자를 functools.partial로 바인딩해야 합니다. (책: 아래 주석 줄)
 # builder.add_node("extract_and_save", extract_and_save_to_graph)
 builder.add_node("extract_and_save", partial(extract_and_save_to_graph, graph=graph, structured_llm=structured_llm))
 builder.add_edge(START, "extract_and_save")

@@ -19,7 +19,7 @@ ModelCallLimitMiddleware(thread_limit=10) 때문에 그 뒤의 질문에는 "Mod
 
 실행 방법:
     uv run python ch04_research_agent/run_research_agent.py
-    (책처럼 폴더 안에서: cd ch04_research_agent && uv run python run_research_agent.py)
+    (폴더 안에서 실행할 때: cd ch04_research_agent && uv run python run_research_agent.py)
 필요한 환경 변수 (리포지토리 루트의 .env): OPENAI_API_KEY, NAVER_CLIENT_ID, NAVER_CLIENT_SECRET
     네이버 키 발급 방법은 agent/baby_research.py 머리말의 준비물에 있습니다.
     선택(LangSmith 트레이싱, 4장 1절): LANGSMITH_TRACING=true, LANGSMITH_API_KEY, LANGSMITH_PROJECT
@@ -121,7 +121,6 @@ if __name__ == "__main__":
 # [관련 기사 보기](https://m.entertain.naver.com/article/003/0013780242)
 
 # 에이전트는 맥락을 보고 도구를 고르므로 항상 보고서를 만들지는 않습니다. 그래서 보고서 작성을 직접 요청합니다.
-# 참고: 아래 결과의 경로는 저자의 컴퓨터 경로이며, 이 리포지토리에서는 ch04_research_agent/output/report.md에 저장됩니다.
 # [책의 실행 결과] 4장 3절 - 이어서 질문: 지금까지의 내용을 바탕으로 보고서를 작성해줘.
 # > 보고서가 /Users/minkeychang/mybooks/output/report.md에 저장되었습니다.
 #

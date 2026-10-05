@@ -11,7 +11,7 @@
     uv run python ch06_multi_agent_school/01_sequential_parallel.py
 필요한 환경 변수: OPENAI_API_KEY (모델: gpt-4o-mini)
     6장의 모든 예제가 ChatOpenAI를 쓰므로, 키를 리포지토리 루트의 .env 파일에 적어 둡니다.
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -104,7 +104,6 @@ for step in result["status"]:
 # 제빵사: 밀가루 반죽을 오븐에 넣어 노릇노릇하고 바삭하게 구워냈습니다.
 # 소스 전문가: 구운 빵 위에 신선한 토마토 소스를 골고루 펴 발랐습니다.
 # 토핑 전문가: 소스가 발린 빵 위에 햄과 모짜렐라 치즈를 풍성하게 올렸습니다.
-# 참고: LLM의 답변은 실행할 때마다 달라집니다. 이 코드의 첫 에이전트 이름은 책의 결과에 나오는 '제빵사'가 아니라 '반죽 담당'입니다.
 
 
 # %% 2. 다 같이 동시에!: 병렬 패턴 - 조별 과제 구현: 상태와 서브 에이전트 정의
@@ -118,8 +117,7 @@ from typing import Annotated
 # 1. 상태 정의
 class ReportState(TypedDict):
     topic: str
-    # [수정] 두 노드가 같은 단계에서 sections를 갱신하므로 리듀서가 필요합니다(없으면 InvalidUpdateError).
-    #        operator.add는 두 노드가 돌려준 리스트를 이어 붙입니다. (책: 아래 주석 줄)
+    # [수정] 두 노드가 같은 단계에서 sections를 갱신하므로, 리스트를 이어 붙이는 리듀서(operator.add)가 필요합니다. (책: 아래 주석 줄)
     # sections: List[str]
     sections: Annotated[List[str], operator.add]
 

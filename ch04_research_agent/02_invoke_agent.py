@@ -6,14 +6,14 @@
 - BabyContext.create()로 현재 날짜를 담은 Context를 만들어 context 인자로 넘깁니다.
 - config의 thread_id는 체크포인터가 대화를 저장하고 이어 가는 단위입니다.
 
-책의 코드처럼 실행 결과는 result에 담기만 하고 화면에 출력하지 않습니다.
+실행 결과는 result에 담기만 하고 화면에 출력하지 않습니다.
 실행 과정을 보려면 LangSmith 트레이싱을 켜거나(run_research_agent.py 머리말 참고) run_research_agent.py를 사용합니다.
 
 실행 방법:
     uv run python ch04_research_agent/02_invoke_agent.py
-필요한 환경 변수: OPENAI_API_KEY, NAVER_CLIENT_ID, NAVER_CLIENT_SECRET
+필요한 환경 변수 (리포지토리 루트의 .env): OPENAI_API_KEY, NAVER_CLIENT_ID, NAVER_CLIENT_SECRET
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.

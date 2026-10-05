@@ -120,7 +120,7 @@ app = workflow.compile()
 # supervisor가 path_map에 없는 이름(예: 오타 "supplyy_expert"나 "잘 모르겠음")을 내면 KeyError로 그 자리에서 멈춥니다.
 # 운영 코드라면 라우터 함수에 짧은 가드를 두고, path_map에 "fallback": "fallback_node"를 더해
 # fallback_node가 조장에게 다시 묻거나 사과 메시지를 남기고 END로 가게 합니다.
-# 책의 안내대로 이 가드는 정의만 하고 본문 그래프(app)에는 연결하지 않습니다.
+# 학습 단계에서는 위 그래프(app)를 그대로 두고, 실전에 옮길 때 이 가드를 끼워 넣습니다.
 ALLOWED = {"supply_expert", "cook_expert", "design_expert"}
 
 def route_from_supervisor(state: FestivalState) -> str:
@@ -148,8 +148,6 @@ for event in app.stream(input_1):
 # [책의 실행 결과]
 # [테스트 1: 홍보 문의]
 # [design_expert] 마지막 메시지: '치즈가 쭈욱-' 부스 홍보를 위해 학교 정문에 대형 포스터를 부착했습니다!
-#
-# 참고: 실제로 실행하면 design_node의 print 문 줄("-> [홍보 담당] ...")도 마지막 메시지 앞에 함께 찍힙니다.
 
 
 # %% stream으로 노드별 업데이트 보기 - 테스트 2: 재료 문의
@@ -174,5 +172,3 @@ for event in app.stream(input_2):
 # ------------------------------
 # [테스트 2: 재료 문의]
 # [supply_expert] 마지막 메시지: 치즈 떡볶이를 위한 떡과 고추장, 어묵 예산을 5만 원으로 책정했습니다!
-#
-# 참고: 테스트 1과 마찬가지로 "-> [재료 담당] 전문가가 분석을 시작합니다." 줄도 함께 찍힙니다.

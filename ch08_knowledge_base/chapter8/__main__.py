@@ -7,7 +7,7 @@
 - exam: 기출 문항마다 키워드 추출 -> 《날개》 메모 의미 검색 -> Neo4j 인물 관계·해석 조회 -> 구조화 출력으로
   선지 번호와 해설을 만듭니다(chapter8/exam_agent.py). 내부 논리는 'RAG + 구조화 추론' 흐름입니다.
 
-실행 방법 (책은 프로젝트 루트에서 실행하지만, 이 리포에서는 chapter8/이 ch08_knowledge_base/ 안에 있으므로 먼저 이 폴더로 이동합니다):
+실행 방법 (ch08_knowledge_base 폴더로 이동해 실행합니다):
     cd ch08_knowledge_base
     uv run python -m chapter8 ingest   # 소설 텍스트를 DB에 적재
     uv run python -m chapter8 exam              # 40~43 전부
@@ -16,7 +16,7 @@
     exam은 ingest가 만든 Neo4j 그래프와 메모 캐시(chapter8/.memo_cache/literature_memos.json)를 쓰므로 ingest를 먼저 실행합니다.
 필요한 환경 변수: OPENAI_API_KEY, NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD (선택: NEO4J_DATABASE, CHAPTER8_LLM_MODEL, 기본 gpt-4o-mini)
     리포지토리 루트의 .env.local을 먼저 읽고 .env로 보완합니다. Neo4j 준비는 01_store_basics.py 머리말을 참고합니다.
-준비물: exam은 data/exam/기출_날개.txt가 필요합니다. 저작권 문제로 리포에 넣지 않았으며, 준비 방법은 chapter8/exam_agent.py 머리말에 있습니다.
+준비물: exam은 data/exam/기출_날개.txt를 읽습니다. 파일 형식은 chapter8/exam_agent.py 머리말을 참고합니다.
 
 모델이 정답을 맞힌다는 보장은 없습니다. 이 에이전트의 목적은 지식베이스로 근거를 찾고 추론하는 과정을 보여 주는 것입니다.
 """

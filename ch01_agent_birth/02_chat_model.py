@@ -29,8 +29,7 @@ model = init_chat_model("openai:gpt-4o")
 
 # 만약 Claude로 뇌를 바꾸고 싶다면? 아래 한 줄이면 충분합니다!
 # model = init_chat_model("anthropic:claude-3-5-sonnet-latest")
-# 참고: 권장 모델명은 시기에 따라 바뀝니다. 위 Claude 모델은 서비스가 종료되었으니, 주석을 풀 때는
-#       공급자 문서의 모델 목록에서 현재 모델명으로 바꿔 주세요(9장은 anthropic:claude-sonnet-4-6 사용).
+# 참고: Claude로 바꿀 때는 Anthropic 문서의 모델 목록에서 현재 모델명을 확인해 넣습니다(예: anthropic:claude-sonnet-4-6).
 
 # %% 2. 모델은 어떻게 호출하나요? - 표준 호출 메서드: invoke
 # 표준 호출 메서드는 invoke(단일 응답, AIMessage), stream(실시간 스트리밍, AIMessageChunk),

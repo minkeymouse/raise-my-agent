@@ -28,22 +28,16 @@ dependencies = [
     "langchain-neo4j>=0.9",
     "neo4j>=5.0",
     # 9장: MCP
-    #   fastmcp 3.x는 리스트를 반환하는 Resource(9-3 get_subject_curriculum)에서 오류가 나고,
-    #   fastmcp 4.x는 mcp 2.x를 요구하는데 langchain-mcp-adapters가 아직 mcp 2.x를 지원하지 않습니다.
-    #   fastmcp 2.x에 알려진 보안 권고(CVE-2025-64340: Windows의 `fastmcp install` 명령,
-    #   CVE-2026-27124: GitHub OAuth 프록시)는 이 리포가 쓰지 않는 기능에만 해당합니다.
     "fastmcp>=2.12,<3",
-    #   0.3.2부터 mcp<2 상한이 명시되어 함께 동작하는 mcp 1.x가 설치됩니다.
     "langchain-mcp-adapters>=0.3.2",
 ]
 
 [dependency-groups]
-# `uv sync`는 dev 그룹도 함께 설치합니다.
 dev = [
-    # 리포지토리 점검 (tests/, CI)
+    # 코드 점검 (tests/, CI)
     "ruff>=0.6",
     "pytest>=8.0",
-    # VS Code, PyCharm에서 `# %%` 셀 단위로 실행할 때 필요한 주피터 커널
+    # VS Code, PyCharm에서 `# %%` 셀 단위로 실행할 때 쓰는 주피터 커널
     "ipykernel>=6.29",
 ]
 

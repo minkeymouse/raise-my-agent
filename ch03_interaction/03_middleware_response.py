@@ -10,16 +10,15 @@
 실행 방법:
     uv run python ch03_interaction/03_middleware_response.py
 필요한 환경 변수: OPENAI_API_KEY (리포지토리 루트의 .env 파일에 넣습니다)
-준비물 (선택): 책의 hungry 결과처럼 eat 도구가 성공하려면 이 폴더에 food.txt를 만들어 둡니다. 예: echo "맘마" > ch03_interaction/food.txt
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+준비물 (선택): 기분이 hungry일 때 eat 도구가 맘마를 먹게 하려면 이 폴더에 food.txt를 만들어 둡니다. 예: echo "맘마" > ch03_interaction/food.txt
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 
 기분은 before_agent에서 무작위로 정해지므로 결과가 매번 다릅니다.
 실행하면 이 폴더(ch03_interaction/)에 아기 에이전트의 기록 파일(cry.txt, poo.txt)이 생깁니다.
 """
 
 # %% [보충] 기록 파일 위치 정하기
-# [보충] 도구가 cry.txt, poo.txt, food.txt를 현재 작업 디렉터리에서 읽고 쓰므로,
-#        어디서 실행하든 이 폴더(ch03_interaction/)를 쓰도록 작업 디렉터리를 옮깁니다.
+# [보충] 도구가 읽고 쓰는 cry.txt, poo.txt, food.txt가 이 폴더(ch03_interaction/)에 생기도록 작업 디렉터리를 옮깁니다.
 import os
 from pathlib import Path
 
@@ -28,7 +27,7 @@ if "__file__" in globals():  # 주피터 커널로 셀 단위 실행할 때는 _
 
 
 # %% [보충] 3장 실습 환경 설정 (00_baby_agent_setup.py와 같은 코드)
-# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 한곳에 모았습니다. 앞에서 배운 내용을 정리해 봅시다.
+# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 하나로 합쳐 정의합니다. 앞에서 배운 내용을 정리해 봅시다.
 # @tool은 함수를 도구로 만들고, args_schema에 넣은 Pydantic 스키마는 인자의 기본값, 설명, 최소/최대값(ge, le)을 정해 두는 '틀'입니다.
 import os
 import random
@@ -47,7 +46,7 @@ load_dotenv(find_dotenv())
 
 # --- 1. 입력 스키마 정의 ---
 class CryInput(BaseModel):
-    # [수정] 필드 이름을 cry 함수의 인자(cry_count)와 맞췄습니다(다르면 cry를 부를 때마다 TypeError). (책: 아래 주석 줄)
+    # [수정] 스키마의 필드 이름은 cry 함수의 인자 이름(cry_count)과 같아야 합니다. (책: 아래 주석 줄)
     # how_many_times: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
     cry_count: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
 
@@ -96,10 +95,10 @@ def eat() -> str:
 
 print("아기 에이전트와 도구 준비 완료!")
 
-# [보충] 책에는 my_model의 정의가 없어 2장에서 사용한 gpt-4o-mini 모델로 만듭니다.
+# [보충] 2장에서 사용한 gpt-4o-mini 모델
 my_model = init_chat_model("openai:gpt-4o-mini")
 
-# [보충] 이 절의 코드에 필요한 import (책에는 생략되어 있습니다)
+# [보충] 이 절의 코드에 필요한 import
 from typing import Any, NotRequired
 from langchain.messages import ToolMessage
 from langchain.agents.middleware import AgentMiddleware, AgentState, ModelRequest, ModelResponse
@@ -117,7 +116,7 @@ class BabyResponse(BaseModel):
 
 # %% 2. 미들웨어를 활용한 에이전트(응용) - 상태 정의
 # 기분(mood)은 네 값 중 하나를 꼭 가지는 속성, 행동(action)은 NotRequired라 없어도 되는 속성입니다.
-# 결과 구조화를 위해 AgentState 대신 AgentState["BabyResponse"]를 상속해 응답 타입을 명시했습니다.
+# 결과 구조화를 위해 AgentState 대신 AgentState["BabyResponse"]를 상속해 응답 타입을 명시합니다.
 class BabyState(AgentState["BabyResponse"]):
     mood: Literal["happy", "hungry", "poopoo", "sleepy"]
     action: NotRequired[Literal["cry", "poo", "eat"]]
@@ -125,7 +124,6 @@ class BabyState(AgentState["BabyResponse"]):
 
 # %% 2. 미들웨어를 활용한 에이전트(응용) - 클래스 기반 커스텀 미들웨어
 # 클래스로 미들웨어를 만들면 before_agent 같은 실행 시점이 메서드 이름이 되어 코드가 직관적입니다.
-# 책은 아래 클래스를 여러 코드 블록으로 나누어 보여 줍니다. 여기서는 블록들을 차례대로 하나의 클래스로 이었습니다.
 class BabyMiddleware(AgentMiddleware[AgentState["BabyResponse"], Any]):
     # state_schema와 tools로 에이전트에 아기용 상태(mood, action)와 도구를 부여합니다.
     state_schema = BabyState
@@ -163,7 +161,6 @@ class BabyMiddleware(AgentMiddleware[AgentState["BabyResponse"], Any]):
 
     # wrap_model_call: 모델 호출을 감쌉니다. request로 이번 호출의 프롬프트와 도구를 고친 뒤 handler(request)로 실제 모델을 부릅니다.
     # action이 있으면 그 도구 하나만 남기고 구조화 출력을 잠시 끄며(response_format=None), 없으면 도구를 비워 최종 답변을 내게 합니다.
-    # 참고: 설치된 langchain에서는 request의 속성을 직접 바꾸면 DeprecationWarning이 출력되지만 동작에는 문제가 없습니다.
     def wrap_model_call(self, request: ModelRequest, handler) -> ModelResponse:
         mood = request.state.get("mood", "happy")
         action = request.state.get("action", None)
@@ -232,8 +229,6 @@ for chunk in baby_agent.stream(
         print(f"Step: {step}")
         print(f"Data: {data}")
 
-# 참고: 책의 실행 결과는 로컬 모델(gpt-oss:20b, Ollama)로 얻은 것이라 gpt-4o-mini로 실행하면 출력 형식이 조금 다를 수 있습니다.
-#
 # [책의 실행 결과] mood가 sleepy인 경우
 # Step: BabyMiddleware.before_agent
 # Data: {'mood': 'sleepy'}

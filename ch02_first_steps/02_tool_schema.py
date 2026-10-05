@@ -12,7 +12,7 @@
 필요한 환경 변수: OPENAI_API_KEY (리포지토리 루트의 .env)
 에이전트가 도구를 호출하면 이 폴더(ch02_first_steps/)에 cry.txt나 poo.txt가 생깁니다.
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -21,10 +21,10 @@ load_dotenv()
 
 
 # %% [보충] 실습 준비
-# [보충] 아래 도구들이 쓰는 random 모듈입니다. (책에서는 1절에서 임포트했습니다.)
+# [보충] 아래 도구들이 쓰는 random 모듈입니다. (1절의 임포트)
 import random
 
-# [보충] 리포 루트에서 실행해도 cry.txt, poo.txt가 이 장 폴더(ch02_first_steps/)에 생기도록 작업 디렉토리를 옮깁니다.
+# [보충] 도구가 만드는 cry.txt, poo.txt가 이 장 폴더(ch02_first_steps/)에 생기도록 작업 디렉토리를 옮깁니다.
 import os
 from pathlib import Path
 
@@ -94,7 +94,7 @@ def poo(poo_shape: str = "큰응가", poo_count: Optional[int] = None) -> str:
 # %% 4. 입력이 없는 도구 (eat)
 # eat처럼 실행만 하면 되는 도구는 별도의 Pydantic 스키마 없이 함수만 정의해도 충분합니다.
 # 이때 스키마는 {}(빈 객체)가 되며, 에이전트는 "이건 그냥 실행하면 되는구나"라고 판단합니다.
-# 참고: 책은 본문을 "1절과 동일"로 생략하고 "냠냠"만 반환합니다. food.txt를 비우는 전체 본문은 01_tools.py에 있습니다.
+# 생략된 본문(food.txt를 읽고 비우는 코드)은 01_tools.py의 eat에 있습니다.
 @tool("eat", description="맘마를 먹습니다. food.txt를 비웁니다.")
 def eat() -> str:
     # ... (1절과 동일) ...

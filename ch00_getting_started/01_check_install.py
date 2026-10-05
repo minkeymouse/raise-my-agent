@@ -6,11 +6,11 @@
     - LangChain/LangGraph v1은 공급자별 API 키만 있으면 대부분의 예제를 실행할 수 있어, .env 파일에 OpenAI 키를 넣어 둡니다.
     - 마지막으로 langgraph의 버전을 출력해 설치가 잘 되었는지 확인합니다.
 
-준비 순서 (책의 0-1절 순서를 이 리포지토리에 맞췄습니다):
+준비 순서:
     1. 파이썬 확인: python --version (3.11 이상 권장. 낮거나 없으면 3번의 uv sync가 알맞은 버전을 내려받습니다)
     2. uv 설치: https://docs.astral.sh/uv/getting-started/installation/
     3. 리포지토리 루트에서 uv sync
-       책의 uv init, uv venv .venv, uv add ... 를 이 한 줄이 대신합니다. pyproject.toml과 uv.lock에
+       가상환경(.venv) 생성과 패키지 설치가 이 한 줄로 끝납니다. pyproject.toml과 uv.lock에
        모든 장의 패키지가 들어 있으므로, 각 장에 나오는 uv add나 pip install은 따로 실행하지 않아도 됩니다.
     4. 가상환경 활성화는 선택입니다. uv run이 .venv를 자동으로 사용합니다.
     5. cp .env.example .env (Windows 명령 프롬프트에서는 copy) 후 OPENAI_API_KEY 값을 본인의 키로 바꿉니다.
@@ -25,7 +25,7 @@
     선택하면 위에서부터 차례로 셀 단위로 실행할 수도 있습니다.
 필요한 환경 변수: 없음
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -37,8 +37,7 @@ load_dotenv()
 # ModuleNotFoundError가 나면 uv sync를 실행했는지, uv run(또는 활성화된 가상환경)으로 실행했는지 확인하세요.
 import langgraph
 
-# [수정] langgraph v1은 네임스페이스 패키지라 __version__이 없어 AttributeError가 납니다.
-#        설치된 패키지 정보(importlib.metadata)에서 버전을 읽습니다. (책: 아래 주석 줄)
+# [수정] langgraph의 버전은 importlib.metadata의 version()으로 읽습니다. (책: 아래 주석 줄)
 # print("LangGraph 버전:", langgraph.__version__)
 from importlib.metadata import version
 

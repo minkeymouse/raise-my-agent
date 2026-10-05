@@ -10,15 +10,14 @@
 실행 방법:
     uv run python ch03_interaction/02_middleware_control.py
 필요한 환경 변수: OPENAI_API_KEY (리포지토리 루트의 .env 파일에 넣습니다)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 
 마지막 실행은 기분을 무작위로 정하므로 결과가 매번 다릅니다.
 실행하면 이 폴더(ch03_interaction/)에 아기 에이전트의 기록 파일(cry.txt, poo.txt)이 생깁니다.
 """
 
 # %% [보충] 기록 파일 위치 정하기
-# [보충] 도구가 cry.txt, poo.txt, food.txt를 현재 작업 디렉터리에서 읽고 쓰므로,
-#        어디서 실행하든 이 폴더(ch03_interaction/)를 쓰도록 작업 디렉터리를 옮깁니다.
+# [보충] 도구가 읽고 쓰는 cry.txt, poo.txt, food.txt가 이 폴더(ch03_interaction/)에 생기도록 작업 디렉터리를 옮깁니다.
 import os
 from pathlib import Path
 
@@ -27,7 +26,7 @@ if "__file__" in globals():  # 주피터 커널로 셀 단위 실행할 때는 _
 
 
 # %% [보충] 3장 실습 환경 설정 (00_baby_agent_setup.py와 같은 코드)
-# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 한곳에 모았습니다. 앞에서 배운 내용을 정리해 봅시다.
+# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 하나로 합쳐 정의합니다. 앞에서 배운 내용을 정리해 봅시다.
 # @tool은 함수를 도구로 만들고, args_schema에 넣은 Pydantic 스키마는 인자의 기본값, 설명, 최소/최대값(ge, le)을 정해 두는 '틀'입니다.
 import os
 import random
@@ -46,7 +45,7 @@ load_dotenv(find_dotenv())
 
 # --- 1. 입력 스키마 정의 ---
 class CryInput(BaseModel):
-    # [수정] 필드 이름을 cry 함수의 인자(cry_count)와 맞췄습니다(다르면 cry를 부를 때마다 TypeError). (책: 아래 주석 줄)
+    # [수정] 스키마의 필드 이름은 cry 함수의 인자 이름(cry_count)과 같아야 합니다. (책: 아래 주석 줄)
     # how_many_times: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
     cry_count: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
 
@@ -95,10 +94,10 @@ def eat() -> str:
 
 print("아기 에이전트와 도구 준비 완료!")
 
-# [보충] 책에는 my_model의 정의가 없어 2장에서 사용한 gpt-4o-mini 모델로 만듭니다.
+# [보충] 2장에서 사용한 gpt-4o-mini 모델
 my_model = init_chat_model("openai:gpt-4o-mini")
 
-# [보충] 아래 my_system_prompt가 사용하는 current_mood는 3장 1절에서 정한 값입니다.
+# [보충] 3장 1절의 current_mood
 # 현재 기분 랜덤 설정 (예: 'hungry')
 current_mood = "hungry"
 
@@ -133,7 +132,7 @@ my_system_prompt = f"""
 
 # %% 2. 기본 미들웨어 - 미들웨어를 넣어 에이전트 만들기
 # middleware 인자에 기본 미들웨어를 리스트로 넣습니다. 호출 횟수가 계속 기록되다가 최대 횟수를 넘으면 루프가 바로 끝납니다.
-# 책은 이 에이전트의 실행 코드를 싣지 않아 여기서도 만들기만 합니다. 아래 결과는 poo 호출이 1회 제한을 넘어 루프가 끝난 모습입니다.
+# 아래 결과는 이 에이전트를 stream으로 실행했을 때의 출력 일부로, poo 호출이 1회 제한을 넘어 루프가 끝난 모습입니다.
 baby_agent = create_agent(
     model = my_model,
     tools = [cry, poo, eat],
@@ -142,7 +141,7 @@ baby_agent = create_agent(
     system_prompt=my_system_prompt,
 )
 
-# [책의 실행 결과] (책에는 이 결과를 출력한 실행 코드가 없습니다)
+# [책의 실행 결과]
 # (생략)
 #  chunk: {'ToolCallLimitMiddleware[poo].before_model': {'jump_to': 'end', 'messages': [AIMessage(content="'poo' tool call limits exceeded: run limit (1/1)", additional_kwargs={}, response_metadata={}, id='4b0123d6-7cb7-43f1-8770-596563673f5a')]}}
 
@@ -195,8 +194,8 @@ def mood_based_prompt(request: ModelRequest) -> str:
 # 커스텀 미들웨어를 기본 미들웨어와 함께 리스트에 넣고, context_schema 인자도 꼭 함께 넘깁니다.
 baby_agent = create_agent(
     # ...
-    # [보충] 책에서 ...으로 생략한 인자를 앞의 에이전트와 같게 채웁니다(...을 그대로 두면 오류가 납니다).
-    # 시스템 프롬프트는 mood_based_prompt 미들웨어가 만들므로 system_prompt는 넣지 않습니다.
+    # [보충] ...으로 생략된 인자는 앞의 에이전트와 같습니다.
+    # 시스템 프롬프트는 mood_based_prompt 미들웨어가 만들므로 system_prompt 인자는 필요 없습니다.
     model = my_model,
     tools = [cry, poo, eat],
     store=InMemoryStore(),
@@ -212,6 +211,7 @@ baby_agent = create_agent(
 
 # %% 3. 커스텀 미들웨어 만들어 보기 - 컨텍스트를 넣어 실행하기
 # 기분을 무작위로 고르고 invoke의 context 인자로 넘깁니다. mood_based_prompt가 이 값을 읽어 프롬프트를 고릅니다.
+# 아래 결과는 미들웨어가 작동해 poo 도구 호출 횟수가 제한을 넘으며 루프가 끝난 경우입니다.
 current_mood = random.choice(["happy", "hungry", "poopoo", "sleepy"])
 
 result = baby_agent.invoke(
@@ -220,7 +220,5 @@ result = baby_agent.invoke(
 )
 print("결과:", result["messages"][-1].content)
 
-# [책의 실행 결과] 기분은 실행할 때마다 무작위로 정해지므로 결과가 달라질 수 있습니다.
+# [책의 실행 결과]
 # 결과: 'poo' tool call limits exceeded: run limit (1/1)
-# (참고: 책의 결과는 미들웨어가 poo 호출 횟수 초과로 루프를 끝낸 경우입니다.
-#  설치된 langchain에서는 같은 상황의 메시지가 "'poo' tool call limit reached: run limit exceeded (2/1 calls)."입니다.)

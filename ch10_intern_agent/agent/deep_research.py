@@ -6,7 +6,7 @@
 - 워크플로우는 목표설정(goal_setting_node) → 조사(investigation_node) → 갭 체크(check_gaps) → 보고서 생성(generation_node)이고,
   조사 결과에 부족한 영역(갭)이 남아 있으면 조사 노드로 되돌아가는 조건부 루프가 핵심입니다.
 - 1절은 State와 목표설정 노드, 2절은 검색 함수와 조사 노드, 갭 체크, 3절은 생성 노드와 그래프 조립, 실행을 다룹니다.
-  책처럼 세 절의 코드를 이 파일 하나에 이어서 작성합니다. 3절 '4. 체크포인터 연결'은 03_checkpointer.py에 있습니다.
+  세 절의 코드는 모두 이 파일 하나에 이어서 작성합니다. 3절 '4. 체크포인터 연결'은 03_checkpointer.py에 있습니다.
 
 실행 방법 (리포지토리 루트에서):
     uv run python ch10_intern_agent/agent/deep_research.py     (3절 '1) 코드에서 직접 실행')
@@ -17,8 +17,7 @@ Studio: 터미널에 나오는 Studio UI 주소를 브라우저에서 열고 그
     그래프 구조와 조건부 루프, 노드마다 채워지는 State, 조사 노드의 반복 횟수, 최종 report 필드를 확인할 수 있습니다.
     Studio에서는 보고서가 파일로 저장되지 않습니다. 서버는 Ctrl+C로 멈춥니다.
     Safari에서 Studio가 로컬 서버에 연결되지 않으면 Chrome을 쓰거나 uv run langgraph dev --tunnel로 실행합니다.
-    [수정] langgraph.json에는 책의 설정에 "dependencies": ["."]를 더했습니다. 없으면 langgraph dev가
-    "No dependencies found in config." 오류를 내고 시작되지 않습니다. (JSON 파일에는 주석을 달 수 없어 여기에 적습니다.)
+    [수정] langgraph dev가 시작되려면 langgraph.json에 "dependencies": ["."]가 필요합니다. (책: "dependencies" 항목 없음)
 
 필요한 환경 변수 (리포지토리 루트의 .env):
     OPENAI_API_KEY, NAVER_CLIENT_ID, NAVER_CLIENT_SECRET (선택: LANGSMITH_API_KEY)
@@ -26,10 +25,10 @@ Studio: 터미널에 나오는 Studio UI 주소를 브라우저에서 열고 그
     - NAVER Developers(https://developers.naver.com/main/)에서 애플리케이션을 등록해(사용 API: 검색)
       클라이언트 아이디와 시크릿을 발급받습니다. 4장에서 발급받은 키를 그대로 써도 됩니다.
     - Studio는 LangSmith(https://smith.langchain.com) 웹사이트에서 열리므로 LangSmith 계정이 필요합니다.
-    - 책처럼 패키지를 직접 설치한다면 langgraph-cli 대신 "langgraph-cli[inmem]"을 설치해야 langgraph dev가 실행됩니다.
-      이 리포지토리는 루트에서 uv sync를 한 번 실행하면 모두 설치됩니다.
+    - 필요한 패키지는 리포지토리 루트에서 uv sync를 실행해 설치합니다. 패키지를 직접 설치할 때는
+      langgraph dev를 실행할 수 있도록 "langgraph-cli[inmem]"을 설치합니다.
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # ==============================================================================
@@ -170,8 +169,7 @@ def goal_setting_node(state: ResearchState) -> dict:
 # %% [10-2] 1. 검색 도구 정의 - 1) 웹 검색 도구
 # 네이버 서치 API로 웹 검색을 하는 도구입니다. 전반적인 정보 수집을 맡고, 정렬은 유사도순입니다.
 # 검색 결과는 title, url, snippet, source_type을 담은 dict 목록으로 정리해 돌려줍니다.
-# 참고: 책 본문은 검색 도구를 @tool 데코레이터로 정의한다고 설명하지만 책의 코드에는 @tool이 없습니다.
-#       두 검색 함수는 investigation_node 안에서 일반 함수로 직접 호출됩니다.
+# 웹 검색과 뉴스 검색 도구는 investigation_node 안에서 직접 호출됩니다.
 # ── 검색 도구 정의 (2장 Tool 활용) ─────────────────────────────
 
 def search_web(query: str, num_results: int = 5) -> List[dict]:
@@ -631,7 +629,7 @@ if __name__ == "__main__":
 
     # 보고서를 파일로 저장
     # 상대 경로이므로 명령을 실행한 폴더에 research_report.md가 생깁니다.
-    # [수정] encoding="utf-8"을 더했습니다. 없으면 한글 Windows(cp949)에서 '—', '•' 같은 문자를 쓸 때 UnicodeEncodeError가 납니다. (책: 아래 주석 줄)
+    # [수정] 한글 Windows(cp949)에서도 보고서를 저장할 수 있도록 encoding="utf-8"을 지정합니다. (책: 아래 주석 줄)
     # with open("research_report.md", "w") as f:
     with open("research_report.md", "w", encoding="utf-8") as f:
         f.write(report)
@@ -639,8 +637,6 @@ if __name__ == "__main__":
     print("\n보고서가 research_report.md에 저장되었습니다.")
 
 # [책의 실행 결과] 1회차 조사에서 갭 2개가 발견되어 재조사하고, 2회차에서 갭이 해소되어 보고서 생성으로 넘어갑니다.
-# (책에 실린 실행 흐름 예시입니다. 단계 표시는 위 print 문의 형식과 조금 다르고,
-#  2회차의 수집 건수도 코드는 누적이 아니라 그 회차에 새로 모은 건수로 출력합니다.)
 # ============================================================
 #  심층 리서치 시작
 #  요청: AI 반도체 시장 동향에 대해 심층 보고서를 작성해줘
@@ -683,9 +679,7 @@ if __name__ == "__main__":
 
 
 # %% [10-3] 5. 전체 코드 구조 정리
-# [설명용 코드] 책이 이 파일 전체의 뼈대를 요약해 보여 주는 코드입니다. ...은 본문을 생략했다는 뜻이라 실행하지 않습니다.
-# 요약에서는 그래프를 파일 맨 위 수준에서 바로 조립하지만, 이 파일은 build_research_graph()로 조립해 app에 담습니다.
-# 만들어지는 그래프는 같습니다.
+# [설명용 코드] agent/deep_research.py 파일 하나에 들어가는 전체 구조를 요약한 코드입니다. ...은 본문 생략을 뜻합니다.
 # # agent/deep_research.py 전체 구조
 #
 # # ── 임포트 & 환경 설정 ─────────────────────────────────────────

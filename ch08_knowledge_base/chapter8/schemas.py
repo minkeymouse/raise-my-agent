@@ -68,7 +68,7 @@ class LiteratureExtraction(BaseModel):
     key_quotes: List[str] = Field(default_factory=list, description="핵심 근거 문장 1~5개")
 
 
-# 3절에서 더한 스키마: 문항에서 검색 키워드를 뽑고(ExamKeywords), 선지 번호와 해설을 받습니다(ExamSolution).
+# 3절의 시험공부 에이전트용 스키마: 문항에서 검색 키워드를 뽑고(ExamKeywords), 선지 번호와 해설을 받습니다(ExamSolution).
 class ExamKeywords(BaseModel):
     """시험 지문에서 검색·추론에 쓸 키워드."""
 

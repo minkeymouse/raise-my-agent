@@ -9,15 +9,14 @@
 실행 방법:
     uv run python ch03_interaction/05_human_in_the_loop.py
 필요한 환경 변수: OPENAI_API_KEY (리포지토리 루트의 .env 파일에 넣습니다)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 
-책의 코드처럼 invoke 결과를 출력하지 않으므로 화면에는 도구 준비 완료 메시지만 나옵니다.
+invoke 결과를 출력하지 않으므로 화면에는 도구 준비 완료 메시지만 나옵니다.
 실행하면 이 폴더(ch03_interaction/)에 아기 에이전트의 기록 파일(cry.txt, poo.txt)이 생깁니다.
 """
 
 # %% [보충] 기록 파일 위치 정하기
-# [보충] 도구가 cry.txt, poo.txt, food.txt를 현재 작업 디렉터리에서 읽고 쓰므로,
-#        어디서 실행하든 이 폴더(ch03_interaction/)를 쓰도록 작업 디렉터리를 옮깁니다.
+# [보충] 도구가 읽고 쓰는 cry.txt, poo.txt, food.txt가 이 폴더(ch03_interaction/)에 생기도록 작업 디렉터리를 옮깁니다.
 import os
 from pathlib import Path
 
@@ -26,7 +25,7 @@ if "__file__" in globals():  # 주피터 커널로 셀 단위 실행할 때는 _
 
 
 # %% [보충] 3장 실습 환경 설정 (00_baby_agent_setup.py와 같은 코드)
-# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 한곳에 모았습니다. 앞에서 배운 내용을 정리해 봅시다.
+# 2장에서 만든 아기 에이전트의 도구(cry, poo, eat)와 입력 스키마를 하나로 합쳐 정의합니다. 앞에서 배운 내용을 정리해 봅시다.
 # @tool은 함수를 도구로 만들고, args_schema에 넣은 Pydantic 스키마는 인자의 기본값, 설명, 최소/최대값(ge, le)을 정해 두는 '틀'입니다.
 import os
 import random
@@ -45,7 +44,7 @@ load_dotenv(find_dotenv())
 
 # --- 1. 입력 스키마 정의 ---
 class CryInput(BaseModel):
-    # [수정] 필드 이름을 cry 함수의 인자(cry_count)와 맞췄습니다(다르면 cry를 부를 때마다 TypeError). (책: 아래 주석 줄)
+    # [수정] 스키마의 필드 이름은 cry 함수의 인자 이름(cry_count)과 같아야 합니다. (책: 아래 주석 줄)
     # how_many_times: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
     cry_count: Optional[int] = Field(None, description="울음 횟수(없으면 랜덤)", ge=1, le=10)
 
@@ -94,7 +93,7 @@ def eat() -> str:
 
 print("아기 에이전트와 도구 준비 완료!")
 
-# [보충] 책에는 my_model의 정의가 없어 2장에서 사용한 gpt-4o-mini 모델로 만듭니다.
+# [보충] 2장에서 사용한 gpt-4o-mini 모델
 my_model = init_chat_model("openai:gpt-4o-mini")
 
 
@@ -126,9 +125,9 @@ baby_agent = create_agent(
 # %% 2. 부모의 세 가지 선택: Approve, Edit, Reject - 1. Approve (허락하기)
 # 에이전트가 eat 앞에서 멈추면(Interrupt), 부모는 Command(resume=...)에 결정을 담아 실행을 이어 갑니다.
 # config의 thread_id로 어느 대화를 이어 갈지 알려 줍니다. approve는 도구 호출을 그대로 허가합니다.
-from langgraph.types import Command  # [보충] 책에는 import가 생략되어 있습니다.
+from langgraph.types import Command  # [보충] Command import
 
-# [보충] 책은 eat 앞에서 멈춘 상태에서 시작하므로 대화방(config)을 정하고 말을 걸어 멈춘 상태를 만듭니다.
+# [보충] 대화방(config)을 정하고 말을 걸어 eat 앞에서 멈춘 상태를 만듭니다.
 # resume은 멈춘 대화를 이어 가는 것이므로 Edit, Reject도 각자 새 대화방에서 같은 방법으로 먼저 멈춥니다.
 config = {"configurable": {"thread_id": "approve"}}
 baby_agent.invoke({"messages": [{"role": "user", "content": "아기야, 맘마 먹을 시간이야!"}]}, config=config)

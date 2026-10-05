@@ -10,7 +10,7 @@
 실행 방법:
     uv run python ch05_graph_blueprint/02_reducer_router.py
 필요한 환경 변수: 없음 (LLM을 호출하지 않습니다)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -38,8 +38,8 @@ class MemoryState(TypedDict):
 # 라우터는 조건부 엣지에서 '다음에 어느 노드로 갈지'를 판단하는 로직입니다. 라우터의 3박자는 다음과 같습니다.
 # (1) 조건 함수: 상태를 보고 행선지 이름(문자열)을 반환  (2) 경로 지도: 그 이름과 실제 노드를 잇는 사전
 # (3) 연결: add_conditional_edges로 그래프에 등록. 라우터 함수는 상태를 바꾸지 않고 읽기만 합니다.
-# [보충] 아래 예시는 1절의 AgentState와 그래프 빌더(workflow)를 이어서 사용하므로 1절의 코드를 옮겨 둡니다.
-#        책처럼 라우터를 등록만 하고 실행하지는 않으므로 이 셀은 출력이 없습니다.
+# 이 셀은 라우터를 그래프에 등록하기만 하므로 출력이 없습니다.
+# [보충] 1절의 AgentState와 그래프 빌더(workflow)
 from langgraph.graph import MessagesState
 from langgraph.graph import StateGraph, START, END
 
@@ -51,7 +51,7 @@ class AgentState(MessagesState):
 # 1. 그래프 빌더 생성 (설계도판 깔기)
 workflow = StateGraph(AgentState)
 
-# 여기부터 책의 라우터 예시입니다. 에이전트가 '도구를 쓸까 말까?'를 결정합니다.
+# 에이전트가 '도구를 쓸까 말까?'를 결정하는 간단한 라우터 예시입니다.
 from typing import Literal
 
 # 1. 조건 함수: 상태를 보고 '다음 행선지 이름'을 반환
@@ -73,9 +73,6 @@ workflow.add_conditional_edges(
         "end": END             # 함수가 'end'를 뱉으면 -> 종료
     }
 )
-
-# 참고: 개념 설명용 예시라 상태의 tool_calls 키를 읽습니다. MessagesState 기반 그래프에서는 도구 호출 요청이
-#       마지막 메시지에 들어 있으므로 state["messages"][-1].tool_calls를 확인합니다(3절의 should_continue).
 
 
 # %% 3. 예제: 반복해서 검색하는 끈질긴 에이전트

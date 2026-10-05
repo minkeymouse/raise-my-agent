@@ -220,7 +220,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 # ── raise-my-agent ──────────────────────────────
-# API 키 등 비밀 값 (절대 커밋 금지). `.env`는 위의 Environments 항목에서 이미 제외됩니다.
+# API 키 등 비밀 값
 .env
 .env.local
 .env.*.local
@@ -240,7 +240,7 @@ food.txt
 ch04_research_agent/output/
 #   8장 시험공부 에이전트의 메모 캐시
 ch08_knowledge_base/**/.memo_cache/
-# 8장 기출 문항 파일은 저작권 문제로 리포에 넣지 않습니다. 독자가 직접 준비한 파일이 커밋되지 않도록 제외합니다.
+#   8장 시험 문항 파일 (직접 준비)
 ch08_knowledge_base/data/exam/
 #   9장 study_server.py의 create_note 도구가 만든 노트
 ch09_mcp/**/notes/

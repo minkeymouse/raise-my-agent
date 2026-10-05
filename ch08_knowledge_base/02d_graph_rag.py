@@ -12,7 +12,7 @@
 필요한 환경 변수: 없음 (LLM을 호출하지 않습니다)
 준비물: Neo4j. 실행 전에 password="YOUR_PASSWORD"를 본인 비밀번호로 바꿉니다(Neo4j Desktop은 APOC 플러그인 필요, 02a 머리말 참고).
     조회할 데이터는 3절의 ingest(cd ch08_knowledge_base && uv run python -m chapter8 ingest)로 세 작품을 같은 DB에 넣어 두면 생깁니다.
-책의 코드는 결과를 출력하지 않으므로 셀 단위로 실행한 뒤 results나 graph.query(...)의 반환값을 확인합니다.
+각 셀은 조회 결과를 출력하지 않으므로, 셀 단위로 실행한 뒤 results나 graph.query(...)의 반환값을 확인합니다.
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.

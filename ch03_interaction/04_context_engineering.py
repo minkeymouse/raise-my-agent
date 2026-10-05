@@ -14,14 +14,14 @@
 실행 방법:
     uv run python ch03_interaction/04_context_engineering.py
 필요한 환경 변수: 없음 (모델을 호출하지 않습니다)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
 from dotenv import load_dotenv
 load_dotenv()
 
-# [보충] 아래 코드에 필요한 import (책에는 생략되어 있습니다)
+# [보충] 아래 코드에 필요한 import
 import random
 from typing import Literal, NotRequired
 from langchain.messages import ToolMessage
@@ -116,7 +116,7 @@ class BabyState(AgentState["BabyResponse"]):
 
 # %% 4. 라이프사이클 컨텍스트 엔지니어링 - 도구와 스키마에 구체적인 설명 추가하기
 # 도구와 스키마에 설명을 구체적으로 적어 상태/도구에 관한 정보를 주는 것도 라이프사이클 컨텍스트 엔지니어링입니다.
-# [설명용 코드] 책은 eat 도구의 데코레이터 줄과 BabyResponse의 response 필드 한 줄만 보여 줍니다.
+# [설명용 코드] eat 도구의 데코레이터와 BabyResponse의 response 필드
 # @tool("eat", description="맘마를 먹습니다. 디렉토리에 있는 food.txt 파일을 읽고 내용을 지웁니다. 없으면 배고픔 상태를 기록합니다.")
 #
 # response: str = Field(..., description="아기 에이전트의 기분에 따른 짧은 의성어 답변")

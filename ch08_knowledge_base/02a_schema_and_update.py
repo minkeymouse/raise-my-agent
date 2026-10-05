@@ -7,12 +7,12 @@
   프로필은 같은 key로 put()해 덮어쓰고, 메모는 새 UUID key로 계속 추가합니다.
 - 그래프에는 Book, Author, Theme 같은 노드와 WROTE, HAS_THEME 같은 관계를 두고, Cypher MERGE로 '없으면 만들고 있으면 재사용'합니다.
 
-8장 2절 코드는 책의 소제목 순서대로 02a -> 02b -> 02c -> 02d 네 파일로 나눴습니다. 이 순서대로 실행합니다.
+8장 2절 코드는 책의 소제목 순서대로 02a -> 02b -> 02c -> 02d 네 파일에 있으며, 이 순서대로 실행합니다.
 
 실행 방법:
     uv run python ch08_knowledge_base/02a_schema_and_update.py
 필요한 환경 변수: 없음 (LLM을 호출하지 않습니다)
-준비물: Neo4j (마지막 셀, 설치는 01_store_basics.py 머리말 참고). 책처럼 접속 정보를 코드에 적으므로
+준비물: Neo4j (마지막 셀, 설치는 01_store_basics.py 머리말 참고). 접속 정보를 코드에 적으므로
     실행 전에 password="YOUR_PASSWORD"를 본인 비밀번호로 바꿉니다. Aura를 쓰면 url도 neo4j+s://... 주소로 바꿉니다.
 참고: Neo4jGraph는 접속할 때 APOC 프로시저로 그래프 스키마를 읽습니다. Neo4j Desktop에서 "Could not use APOC procedures"
     오류가 나면 인스턴스의 플러그인(Plugins) 메뉴에서 APOC을 설치합니다. 02b, 02d도 같습니다.
@@ -47,7 +47,7 @@ class WorkMemo(TypedDict):
 # "작가 -> 작품"으로 묶고, "작품 -> 주제/인물/핵심 문장"으로 넓히고, 주제나 인물을 매개로 작품을 비교하는 질문에 맞춰 정합니다.
 # 노드: Book, Author, Theme, Character, Quote
 # 관계: WROTE, HAS_THEME, HAS_CHARACTER, HAS_QUOTE
-# 책의 Cypher 예시("없으면 만들고(MERGE), 있으면 재사용")는 아래 '2. 지식베이스 업데이트하기 - Neo4j' 셀의 query 문자열과 같습니다.
+# Cypher로는 "없으면 만들고(MERGE), 있으면 재사용"하는 방식이 안전합니다. 이 쿼리는 아래 '2. 지식베이스 업데이트하기 - Neo4j' 셀에서 실행합니다.
 
 
 # %% 2. 지식베이스 업데이트하기 - 스토어: 작품 프로필 덮어쓰기
@@ -102,8 +102,7 @@ graph = Neo4jGraph(
 )
 
 # MERGE는 노드나 관계가 없으면 만들고 있으면 재사용합니다. UNWIND는 리스트($themes)를 한 행씩 펼쳐 주제마다 MERGE를 반복합니다.
-# 참고: MERGE 바로 뒤에 UNWIND를 쓰는 문법은 Cypher 25에서만 허용됩니다. Cypher 5 DB(Neo4j 5.x 등)에서 "WITH is required between
-#       MERGE and UNWIND" 오류가 나면, Neo4j 2025.06 이상에서 쿼리 맨 앞에 CYPHER 25를 붙여 실행합니다.
+# 참고: "WITH is required between MERGE and UNWIND" 오류가 나면 쿼리 맨 앞에 CYPHER 25를 붙여 실행합니다(Neo4j 2025.06 이상).
 query = """
 MERGE (a:Author {name: $author})
 MERGE (b:Book {title: $title})

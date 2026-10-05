@@ -12,9 +12,9 @@
 실행 방법 (7장의 모든 명령은 리포지토리 루트에서 실행합니다):
     uv run python ch07_orchestration/01_static_vs_dynamic.py
 필요한 환경 변수: 없음 (LLM을 호출하지 않습니다. 7장에서 API 키가 필요한 파일은 2절의 02_coordinator.py뿐입니다)
-참고: 책처럼 엣지 연결 부분만 보여 주는 조각이라, 엣지를 등록할 뿐 컴파일하거나 실행하지 않아 출력이 없습니다.
+참고: 엣지 연결 부분만 보여 주는 조각이라, 엣지를 등록할 뿐 컴파일하거나 실행하지 않아 출력이 없습니다.
       노드까지 갖춘 전체 코드는 ch06_multi_agent_school/01_sequential_parallel.py와 이 폴더의 02_coordinator.py에 있습니다.
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -31,7 +31,7 @@ from langchain_core.messages import BaseMessage
 # %% 3. 정적 워크플로우 vs 동적 오케스트레이션 - 코드 한 줄로 보는 정적 vs 동적: 6장 정적 오케스트레이션
 # 6장 1절 피자빵 워크플로우의 엣지 연결 부분입니다. 지휘 주체는 개발자이고, 판단은 모델이 아니라 코드가 합니다.
 # add_edge(A, B)는 "A가 끝나면 무조건 B로 가라"는 규칙이라, 흐름은 항상 같은 자리(saucer -> topper)로 갑니다.
-# [보충] 조각 코드가 쓰는 workflow를 만들려고 6장 1절의 PizzaState와 그래프 빌더만 옮겼습니다.
+# [보충] 6장 1절의 PizzaState와 그래프 빌더
 class PizzaState(TypedDict):
     status: List[str]
     current_product: str
@@ -48,7 +48,7 @@ workflow.add_edge("saucer", "topper")
 # 2절에서 만들 축제 부스 워크플로우의 엣지 연결 부분입니다. 지휘 주체는 LLM이고, 개발자는 에이전트 명세만 건넵니다.
 # add_conditional_edges: supervisor가 끝난 뒤 함수가 돌려준 값(next_node)으로 다음 노드를 고릅니다.
 # 같은 supervisor에서 출발해도 그날의 입력에 따라 supply_expert로 갈지 cook_expert로 갈지가 달라집니다.
-# [보충] 조각 코드가 쓰는 workflow를 만들려고 2절의 FestivalState와 그래프 빌더만 옮겼습니다.
+# [보충] 2절의 FestivalState와 그래프 빌더
 class FestivalState(TypedDict):
     messages: Annotated[List[BaseMessage], operator.add]
     next_node: str

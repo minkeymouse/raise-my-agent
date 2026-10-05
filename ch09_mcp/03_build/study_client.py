@@ -7,22 +7,19 @@
 
 실행 방법:
     uv run python ch09_mcp/03_build/study_client.py
-    같은 폴더의 study_server.py는 이 스크립트가 stdio 방식으로 직접 띄웁니다. 함께 출력되는 FastMCP 배너와
-    서버 로그(Starting MCP server ...), 경고 메시지는 정상이며, 배너의 업데이트 안내(pip install --upgrade fastmcp)는
-    무시합니다(이 리포는 이 장의 코드와 함께 동작하는 fastmcp 2.x를 설치합니다).
+    같은 폴더의 study_server.py는 이 스크립트가 stdio 방식으로 직접 띄웁니다.
     asyncio.run()은 주피터 커널 안에서 호출할 수 없으므로 # %% 셀 단위가 아니라 위 명령처럼 스크립트로 실행합니다.
 필요한 환경 변수: ANTHROPIC_API_KEY (리포지토리 루트의 .env 파일에 넣습니다. 발급: https://platform.claude.com/)
 에이전트가 만든 노트는 ch09_mcp/03_build/notes/ 폴더에 저장됩니다.
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
-# .env 파일의 API 키를 환경 변수로 불러옵니다.
+# [보충] .env 파일의 API 키를 환경 변수로 불러옵니다.
 from dotenv import load_dotenv
 load_dotenv()
 
-# [보충] 책의 "./study_server.py"는 작업 폴더 기준 상대 경로입니다. 리포 루트에서 실행해도 서버 파일을 찾도록
-#        서버 설정에 "cwd": HERE를 넣어 서버를 이 파일이 있는 폴더(ch09_mcp/03_build/)에서 실행합니다.
+# [보충] 이 파일이 있는 폴더. 서버 설정의 "cwd"로 넘겨 ./study_server.py를 이 폴더에서 실행합니다.
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent

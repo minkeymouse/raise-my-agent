@@ -11,7 +11,7 @@
     uv run python ch01_agent_birth/03_messages.py
 필요한 환경 변수: OPENAI_API_KEY
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -30,10 +30,10 @@ messages = [
     SystemMessage(content="너는 팩트만 말하는 비서다."),   # 지침(세계관)
     HumanMessage(content="지금 환율 얼마야?"),            # 자극(사용자 입력)
     AIMessage(content="잠시만요, 검색해볼게요...",          # 생각/행동(AI의 1차 반응)
-              # [수정] 책 본문의 설명대로 도구 호출에 args와 id를 더했습니다(없으면 TypeError). (책: 아래 주석 줄)
+              # [수정] 도구 호출에는 args와 id가 필요합니다. (책: 아래 주석 줄)
               #   tool_calls=[{"name": "search_rate"}]),
               tool_calls=[{"name": "search_rate", "args": {}, "id": "call_1"}]),
-    # [수정] 위 도구 호출과 같은 tool_call_id를 더했습니다(없으면 KeyError). (책: 아래 주석 줄)
+    # [수정] ToolMessage에는 위 도구 호출과 같은 tool_call_id가 필요합니다. (책: 아래 주석 줄)
     # ToolMessage(content="1달러 = 1430원"),                 # 경험(외부 도구 실행 결과)
     ToolMessage(content="1달러 = 1430원", tool_call_id="call_1"),  # 경험(외부 도구 실행 결과)
     AIMessage(content="현재 환율은 1430원입니다.")          # 최종 답변
@@ -59,7 +59,7 @@ msg = HumanMessage(
 # 순서를 바꾸면 같은 문장이라도 해석 맥락이 달라질 수 있습니다. 랭그래프에서는 이 리스트가 상태(State)의 중심이 되며,
 # 너무 많이 쌓이면 자원을 초과할 수 있어 요약, 잘라 내기 같은 컨텍스트 엔지니어링을 책의 뒷부분에서 다룹니다.
 
-# [보충] 1-2절에서 만든 채팅 모델 (이 파일만으로 실행되도록 다시 만듭니다)
+# [보충] 1장 2절에서 만든 채팅 모델
 from langchain.chat_models import init_chat_model
 model = init_chat_model("openai:gpt-4o")
 
@@ -86,4 +86,3 @@ response.pretty_print()
 # [책의 실행 결과] (예시, 모델에 따라 문장은 달라질 수 있음)
 # ================================== AI Message ==================================
 # 서울의 날씨는 맑음입니다.
-# 참고: 실제 pretty_print()는 제목 줄을 'AI Message'가 아니라 'Ai Message'로 출력하고, 그 아래에 빈 줄을 넣습니다.

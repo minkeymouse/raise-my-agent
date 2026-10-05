@@ -22,13 +22,13 @@ Claude Desktop은 앱을 실행할 때마다 설정 파일에 적힌 서버를 �
    설정 파일 claude_desktop_config.json을 엽니다.
    macOS: ~/Library/Application Support/Claude/claude_desktop_config.json
    Windows: %APPDATA%\Claude\claude_desktop_config.json
-2. ch09_mcp/04_integration/claude_desktop_config.example.json(책의 설정)의 내용을 붙여 넣고, 두 값을
+2. ch09_mcp/04_integration/claude_desktop_config.example.json(4절의 설정 예시)의 내용을 붙여 넣고, 두 값을
    이 컴퓨터의 절대 경로로 고칩니다(상대 경로는 Claude Desktop이 인식하지 못할 수 있습니다).
    - args: 이 파일의 절대 경로. 예: /Users/username/raise-my-agent/ch09_mcp/03_build/study_server.py
-   - command: fastmcp가 설치된 파이썬이어야 하므로 "python" 대신 이 리포 .venv의 파이썬 절대 경로를 적습니다.
+   - command: fastmcp가 설치된 파이썬이어야 하므로 "python" 대신 리포지토리 루트 .venv의 파이썬 절대 경로를 적습니다.
      (macOS: .../raise-my-agent/.venv/bin/python, Windows: ...\raise-my-agent\.venv\Scripts\python.exe)
    Windows 경로는 JSON 안에서 "C:\\Users\\username\\...\\study_server.py"처럼 역슬래시를 두 번씩 적습니다.
-   여러 서버를 함께 등록하려면 "mcpServers" 안에 항목을 더합니다. 책의 예시(Node.js의 npx가 필요합니다):
+   여러 서버를 함께 등록하려면 "mcpServers" 안에 항목을 더합니다. 4절의 예시(Node.js의 npx가 필요합니다):
        "filesystem": {
          "command": "npx",
          "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/username/Desktop"]
@@ -39,11 +39,12 @@ Claude Desktop은 앱을 실행할 때마다 설정 파일에 적힌 서버를 �
 4. 대화창에서 "수학 노트를 만들어줘. 이차방정식 근의 공식을 정리해서."처럼 말로 요청하면 create_note가 호출됩니다.
    Cursor, Claude Code 등 MCP를 지원하는 다른 앱에도 연결 대상만 바꿔 같은 서버를 쓸 수 있습니다.
 
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # %% 4. 실습: 학습 도우미 Server 만들기 - ① Tool 정의하기: 실행 가능한 기능
-# FastMCP는 MCP Server를 만드는 데 가장 널리 쓰이는 프레임워크로, 책은 아래 명령으로 설치합니다(이 리포는 uv sync).
+# FastMCP는 MCP Server를 만드는 데 가장 널리 쓰이는 프레임워크로, 아래 명령으로 설치합니다
+# (리포지토리 루트에서 uv sync를 실행하면 함께 설치됩니다).
 #     pip install fastmcp
 # Tool은 LLM이 실행할 수 있는 함수(행동)로, 수업 중 실습 과제에 해당합니다. 2장에서 @tool로 만든 cry, poo, eat과
 # 구조가 비슷하고 @mcp.tool()을 쓴다는 점만 다르며, 이렇게 하면 이 도구들에 MCP 프로토콜로 외부에서 접근할 수 있습니다.
@@ -53,8 +54,7 @@ from datetime import datetime
 
 mcp = FastMCP("Study Helper Server")
 
-# [보충] 책의 create_note는 notes/ 폴더가 없으면 FileNotFoundError가 납니다. 어디서 서버를 띄우든(Claude Desktop 포함)
-#        노트가 이 파일 옆 notes/에 쌓이도록 작업 폴더를 이 파일의 폴더로 옮기고 notes/ 폴더를 만듭니다.
+# [보충] 작업 폴더를 이 파일의 폴더로 바꾸고, 노트를 저장할 notes/ 폴더를 만듭니다.
 import os
 from pathlib import Path
 
@@ -66,7 +66,7 @@ os.makedirs("notes", exist_ok=True)
 @mcp.tool()
 def create_note(subject: str, content: str) -> str:
     """과목별 학습 노트를 생성합니다."""
-    # 참고: Windows는 파일 이름에 콜론(:)을 쓸 수 없으니, 노트가 이상하게 저장되면 "%H:%M"을 "%H-%M"으로 바꿉니다.
+    # Windows에서는 파일 이름에 콜론(:)을 쓸 수 없으므로 "%H:%M"을 "%H-%M"으로 바꿔 실행합니다.
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     filename = f"notes/{subject}_{timestamp}.txt"
 

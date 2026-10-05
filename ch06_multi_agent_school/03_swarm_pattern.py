@@ -11,7 +11,7 @@
     uv run python ch06_multi_agent_school/03_swarm_pattern.py
     중재자가 finish_discussion을 호출해야 끝납니다. 결론이 나지 않아 대화가 길어지면 Ctrl+C로 멈춥니다.
 필요한 환경 변수: OPENAI_API_KEY (모델: gpt-4o)
-표시: [보충] 실행을 위해 더한 코드, [수정] 책 코드의 오류를 고친 곳, [설명용 코드] 실행되지 않는 설명용 조각
+표시: [보충] 실행에 필요한 코드, [수정] 실행에 맞게 고친 코드, [설명용 코드] 실행되지 않는 설명용 조각
 """
 
 # .env 파일의 API 키를 환경 변수로 불러옵니다.
@@ -99,8 +99,7 @@ def agent_node(state, agent, name):
 
     # 도구 호출(Handoff)을 분석해 다음 발언자 결정
     next_speaker = "moderator" # 기본값
-    # [수정] create_agent는 도구 실행 후 최종 답변까지 마치므로 마지막 메시지에는 tool_calls가 없어 핸드오프가 무시됩니다.
-    #        그래서 tool_calls가 있는 메시지 중 가장 마지막 것에서 도구 이름을 읽습니다. (책: 아래 주석 두 줄)
+    # [수정] 마지막 메시지는 도구 실행 뒤의 최종 답변이므로, tool_calls가 있는 메시지 중 가장 마지막 것에서 도구 이름을 읽습니다. (책: 아래 주석 두 줄)
     # if result["messages"][-1].tool_calls:
     #     tool_name = result["messages"][-1].tool_calls[0]["name"]
     handoff_messages = [m for m in result["messages"] if getattr(m, "tool_calls", None)]
@@ -143,7 +142,7 @@ app = workflow.compile()
 
 # %% 2. 점심 메뉴 정하기 - 실행
 # 첫 메시지와 함께 next_speaker를 "moderator"로 넣어 실행하고, 내용이 있는 메시지만 출력합니다.
-# 책의 '3. 너무 시끄러운 쉬는시간은 안돼!'에서 말하듯 에이전트끼리 말이 많아지면 모델 호출 횟수(비용)가 급격히 늘어납니다.
+# '3. 너무 시끄러운 쉬는시간은 안돼!'에서 다루듯 에이전트끼리 말이 많아지면 모델 호출 횟수(비용)가 급격히 늘어납니다.
 # 이 예제는 최대 대화 턴 수를 따로 제한하지 않으므로, 중재자가 finish_discussion을 호출해야 토론이 끝납니다.
 # 6. 실행
 print("=== 점심 메뉴 토론 시작 ===")
