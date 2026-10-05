@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "baby_research": "./agent/baby_research.py:studio_graph"
+  },
+  "env": "../.env"
+}

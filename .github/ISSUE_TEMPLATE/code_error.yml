@@ -1,0 +1,39 @@
+name: 실습 코드 실행 오류
+description: 리포지토리의 예제 코드가 실행되지 않거나 책과 다르게 동작할 때 알려 주세요.
+title: "[코드] N장 N절: "
+labels: ["code"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        제보해 주셔서 감사합니다. API 키, 비밀번호 같은 비밀 값은 절대 붙여 넣지 마세요.
+  - type: input
+    id: section
+    attributes:
+      label: 장과 절
+      placeholder: "예: 2장 3절 [ToolRuntime] 에이전트의 센스 기르기"
+    validations:
+      required: true
+  - type: input
+    id: file
+    attributes:
+      label: 실행한 파일과 명령
+      placeholder: "예: uv run python ch02_first_steps/03_tool_runtime.py"
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: 오류 메시지 또는 예상과 다른 동작
+      description: 오류 메시지 전체(Traceback)를 붙여 넣어 주세요.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 실행 환경
+      description: 운영체제와 `uv run python --version`의 출력을 적어 주세요.
+      placeholder: "예: macOS 15, Python 3.12.9"
+    validations:
+      required: true

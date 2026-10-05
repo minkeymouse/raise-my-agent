@@ -1,0 +1,26 @@
+name: 책 내용 오탈자 제보
+description: 책의 본문, 그림, 코드 설명에서 틀린 부분이나 오탈자를 알려 주세요.
+title: "[정오표] N장 N절: "
+labels: ["errata"]
+body:
+  - type: input
+    id: section
+    attributes:
+      label: 장과 절, 소제목
+      placeholder: "예: 5장 1절 > 3. 상태(State) 정의하기"
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: 틀린 내용
+      description: 책에 적힌 문장이나 코드를 그대로 옮겨 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: 바른 내용
+      description: 어떻게 고치면 좋을지, 근거(공식 문서 링크, 실행 결과 등)가 있다면 함께 적어 주세요.
+    validations:
+      required: true

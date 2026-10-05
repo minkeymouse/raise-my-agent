@@ -1,0 +1,45 @@
+# 리포지토리 점검: API 키 없이 문법, 문서 링크, langgraph.json, 비밀 값 노출 여부를 확인합니다.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # pyproject.toml의 지원 범위(requires-python >=3.11)와 리포지토리 기준 버전(.python-version: 3.12)
+        python-version: ["3.11", "3.12"]
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - name: Install dependencies from uv.lock
+        run: uv sync --locked
+
+      - name: Lint (syntax errors and undefined names)
+        run: uv run ruff check .
+
+      - name: Run repository tests
+        run: uv run pytest

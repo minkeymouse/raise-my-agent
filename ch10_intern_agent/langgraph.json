@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "deep_research": {
+      "path": "./agent/deep_research.py:app"
+    }
+  }
+}

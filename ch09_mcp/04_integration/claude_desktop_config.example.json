@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "study-helper": {
+      "command": "python",
+      "args": ["/절대/경로/study_server.py"]
+    }
+  }
+}
